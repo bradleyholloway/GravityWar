@@ -43,5 +43,9 @@ namespace Gravity_War
         {
             return scale;
         }
+        public double getRadius()
+        {
+            return radius;
+        }
     }
 }
