@@ -24,6 +24,7 @@ namespace Gravity_War
             }
             return false;
         }
+        
         public static Vector2 getGravityField(Vector2 location)
         {
             Vector2 sum = Vector2.Zero;

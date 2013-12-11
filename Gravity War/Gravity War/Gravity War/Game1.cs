@@ -20,7 +20,6 @@ namespace Gravity_War
         SpriteBatch spriteBatch;
 
         PlanetGenerator planetGenerator;
-        Bullet b;
 
         public Game1()
         {
@@ -64,9 +63,13 @@ namespace Gravity_War
             planetGenerator.loadImage(Content.Load<Texture2D>("sunPlanet"));
             planetGenerator.loadImage(Content.Load<Texture2D>("yellowPlanet"));
             Bullet.image = Content.Load<Texture2D>("bullet");
-            b = new Bullet(new Vector2(windowX / 2, windowY / 2), Vector2.Zero);
+            Random r = new Random();
+            for(int a = 0; a < 1000; a++)
+            {   
+                Bullets.add(new Bullet(new Vector2(r.Next(windowX), r.Next(windowY)), new Vector2((float)r.NextDouble()*0, (float)r.NextDouble()*0)));
+            }
             Planets.clear();
-            planetGenerator.generate(10);
+            planetGenerator.generate(5);
             // TODO: use this.Content to load your game content here
         }
 
@@ -90,7 +93,21 @@ namespace Gravity_War
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
 
-            b.run(Planets.getGravityField(b.getLocation()));
+            for (int a = 0; a < Bullets.getBullets().Count; a++ )
+            {
+                Bullets.getBullets().ElementAt<Bullet>(a).run(Planets.getGravityField(Bullets.getBullets().ElementAt<Bullet>(a).getLocation()));
+                if (Planets.collides(Bullets.getBullets().ElementAt<Bullet>(a).getLocation()))
+                {
+                    Bullets.remove(a);
+                    a--;
+                }
+            }
+
+            if (Bullets.getBullets().Count == 0)
+            {
+                LoadContent();
+            }
+
             // TODO: Add your update logic here
 
             base.Update(gameTime);
@@ -109,10 +126,10 @@ namespace Gravity_War
             {
                 spriteBatch.Draw(p.getImage(), p.getLocation(), null, Color.White, 0f, p.getOrigin(), p.getScale(), SpriteEffects.None, 0f);
             }
-            //foreach (Bullet b in Bullets.getBullets())
-            //{
-                spriteBatch.Draw(Bullet.image, b.getLocation(), null, Color.White, 0f, Bullet.origin, Bullet.scale, SpriteEffects.None, 0f);
-            //}
+            foreach (Bullet b in Bullets.getBullets())
+            {
+                spriteBatch.Draw(Bullet.image, b.getLocation(), null, Color.White, b.getRotation(), Bullet.origin, Bullet.scale, SpriteEffects.None, 0f);
+            }
 
             spriteBatch.End();
             base.Draw(gameTime);

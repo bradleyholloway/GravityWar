@@ -17,7 +17,7 @@ namespace Gravity_War
         private double density;
         private double mass;
         private Vector2 origin;
-        private static double G = 6.67384 * Math.Pow(10,-11);
+        private static double G = 6.67384 * Math.Pow(10, -11) * 1000000000;
 
         public Planet(Vector2 location, Texture2D image, double radius, double density)
         {

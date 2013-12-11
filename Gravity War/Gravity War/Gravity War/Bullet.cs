@@ -15,7 +15,8 @@ namespace Gravity_War
         public static float radius;
         private Vector2 location;
         private Vector2 velocity;
-        private int time;
+        private double time;
+        private static double timeStep = .5;
 
         public Bullet(Vector2 location, Vector2 velocity)
         {
@@ -32,12 +33,17 @@ namespace Gravity_War
         }
         public void run(Vector2 gravity)
         {
-            velocity += gravity;
-            location += velocity;
+            time+=timeStep;
+            velocity += gravity*(float)timeStep;
+            location += velocity*(float)timeStep;
         }
         public Vector2 getLocation()
         {
             return location;
+        }
+        public float getRotation()
+        {
+            return (float)(Math.Atan2(velocity.Y, velocity.X)+Math.PI/2-Math.PI/6);
         }
 
     }

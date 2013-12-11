@@ -108,6 +108,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Bullet.cs" />
+    <Compile Include="Bullets.cs" />
     <Compile Include="Planet.cs" />
     <Compile Include="PlanetGenerator.cs" />
     <Compile Include="Planets.cs" />
