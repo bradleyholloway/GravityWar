@@ -1,0 +1,24 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gravity War", "Gravity War\Gravity War\Gravity War.csproj", "{2D053F15-274B-4B82-9129-4CE4F6BE28EB}"
+EndProject
+Project("{96E2B04D-8817-42C6-938A-82C39BA4D311}") = "Gravity WarContent", "Gravity War\Gravity WarContent\Gravity WarContent.contentproj", "{64C97604-EB2E-4630-877F-34C7723BC872}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2D053F15-274B-4B82-9129-4CE4F6BE28EB}.Debug|x86.ActiveCfg = Debug|x86
+		{2D053F15-274B-4B82-9129-4CE4F6BE28EB}.Debug|x86.Build.0 = Debug|x86
+		{2D053F15-274B-4B82-9129-4CE4F6BE28EB}.Release|x86.ActiveCfg = Release|x86
+		{2D053F15-274B-4B82-9129-4CE4F6BE28EB}.Release|x86.Build.0 = Release|x86
+		{64C97604-EB2E-4630-877F-34C7723BC872}.Debug|x86.ActiveCfg = Debug|x86
+		{64C97604-EB2E-4630-877F-34C7723BC872}.Release|x86.ActiveCfg = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
