@@ -19,8 +19,12 @@ namespace Gravity_War
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
+        PlanetGenerator planetGenerator;
+        Bullet b;
+
         public Game1()
         {
+            Bullet.radius = 10;
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
         }
@@ -44,9 +48,25 @@ namespace Gravity_War
         /// </summary>
         protected override void LoadContent()
         {
+            
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
-
+            int windowX = GraphicsDevice.Viewport.Width;
+            int windowY = GraphicsDevice.Viewport.Height;
+            planetGenerator = new PlanetGenerator(windowX, windowY);
+            planetGenerator.clearImages();
+            planetGenerator.loadImage(Content.Load<Texture2D>("bluePlanet"));
+            planetGenerator.loadImage(Content.Load<Texture2D>("brownPlanet"));
+            planetGenerator.loadImage(Content.Load<Texture2D>("earthPlanet"));
+            planetGenerator.loadImage(Content.Load<Texture2D>("goldPlanet"));
+            planetGenerator.loadImage(Content.Load<Texture2D>("moonPlanet"));
+            planetGenerator.loadImage(Content.Load<Texture2D>("orangePlanet"));
+            planetGenerator.loadImage(Content.Load<Texture2D>("sunPlanet"));
+            planetGenerator.loadImage(Content.Load<Texture2D>("yellowPlanet"));
+            Bullet.image = Content.Load<Texture2D>("bullet");
+            b = new Bullet(new Vector2(windowX / 2, windowY / 2), Vector2.Zero);
+            Planets.clear();
+            planetGenerator.generate(10);
             // TODO: use this.Content to load your game content here
         }
 
@@ -70,6 +90,7 @@ namespace Gravity_War
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
 
+            b.run(Planets.getGravityField(b.getLocation()));
             // TODO: Add your update logic here
 
             base.Update(gameTime);
@@ -81,10 +102,19 @@ namespace Gravity_War
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(Color.Black);
 
-            // TODO: Add your drawing code here
+            spriteBatch.Begin();
+            foreach (Planet p in Planets.getPlanets())
+            {
+                spriteBatch.Draw(p.getImage(), p.getLocation(), null, Color.White, 0f, p.getOrigin(), p.getScale(), SpriteEffects.None, 0f);
+            }
+            //foreach (Bullet b in Bullets.getBullets())
+            //{
+                spriteBatch.Draw(Bullet.image, b.getLocation(), null, Color.White, 0f, Bullet.origin, Bullet.scale, SpriteEffects.None, 0f);
+            //}
 
+            spriteBatch.End();
             base.Draw(gameTime);
         }
     }
