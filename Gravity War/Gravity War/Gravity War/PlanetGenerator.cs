@@ -11,15 +11,18 @@ namespace Gravity_War
     {
         private int width;
         private int height;
-        private List<Planet> planets;
         private List<Texture2D> images;
         private static Random r = new Random();
         public PlanetGenerator(int width, int height)
         {
             this.width = width;
             this.height = height;
-            planets = new List<Planet>();
         }
+        public void clearImages()
+        {
+            images = new List<Texture2D>();
+        }
+
         public void loadImage(Texture2D image)
         {
             images.Add(image);
@@ -35,25 +38,9 @@ namespace Gravity_War
                 double x = r.NextDouble() * (width - 2 * radius) + radius;
                 double y = r.NextDouble() * (height - 2 * radius) + radius;
                 temp = new Planet(new Microsoft.Xna.Framework.Vector2((int)x, (int)y), image, radius, density);
-            } while (collides(temp));
-            planets.Add(temp);
+            } while (Planets.collides(temp));
+            Planets.Add(temp);
             return temp;
-        }
-
-        public Boolean collides(Planet p1)
-        {
-            foreach (Planet p2 in planets)
-            {
-                if (UTIL.distance(p1.getLocation(), p2.getLocation()) < p1.getRadius() + p2.getRadius())
-                    return true;
-            }
-
-            return false;
-        }
-
-        public void clear()
-        {
-            planets = new List<Planet>();
-        }
+        }        
     }
 }
