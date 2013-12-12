@@ -25,6 +25,7 @@ namespace Gravity_War
         {
             Bullet.radius = 10;
             graphics = new GraphicsDeviceManager(this);
+            graphics.IsFullScreen = false;
             Content.RootDirectory = "Content";
         }
 
@@ -64,12 +65,12 @@ namespace Gravity_War
             planetGenerator.loadImage(Content.Load<Texture2D>("yellowPlanet"));
             Bullet.image = Content.Load<Texture2D>("bullet");
             Random r = new Random();
-            for(int a = 0; a < 1000; a++)
+            for(int a = 0; a < 100; a++)
             {   
-                Bullets.add(new Bullet(new Vector2(r.Next(windowX), r.Next(windowY)), new Vector2((float)r.NextDouble()*0, (float)r.NextDouble()*0)));
+                Bullets.add(new Bullet(new Vector2(/*r.Next(windowX)*/0, ((float)windowY * a / 100)/*r.Next(windowY)*/), new Vector2((float)r.NextDouble()*0+1, (float)r.NextDouble()*0)));
             }
             Planets.clear();
-            planetGenerator.generate(5);
+            planetGenerator.generate(1);
             // TODO: use this.Content to load your game content here
         }
 
