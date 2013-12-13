@@ -16,7 +16,7 @@ namespace Gravity_War
         private Vector2 location;
         private Vector2 velocity;
         private double time;
-        private static double timeStep = .5;
+        public static double timeStep;
 
         public Bullet(Vector2 location, Vector2 velocity)
         {
