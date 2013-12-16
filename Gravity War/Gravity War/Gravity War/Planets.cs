@@ -30,7 +30,8 @@ namespace Gravity_War
             Vector2 sum = Vector2.Zero;
             foreach (Planet p in planets)
             {
-                sum += p.getGravityField(location);
+                if(!p.getLocation().Equals(location))
+                    sum += p.getGravityField(location);
             }
 
             return sum;
@@ -46,6 +47,25 @@ namespace Gravity_War
 
             return false;
         }
+        public static void colide()
+        {
+            for (int a = 0; a < planets.Count-1; a++)
+            {
+                for (int b = a+1; b < planets.Count; b++)
+                {
+                    if(planets.ElementAt<Planet>(a).getRadius() + planets.ElementAt<Planet>(b).getRadius() >= UTIL.distance(planets.ElementAt<Planet>(a).getLocation(), planets.ElementAt<Planet>(b).getLocation()))
+                    {
+                        Planet p1 = planets.ElementAt<Planet>(b);
+                        planets.RemoveAt(b);
+                        Planet p2 = planets.ElementAt<Planet>(a);
+                        planets.RemoveAt(a);
+                        planets.Add(new Planet(p1, p2));
+                        b--;
+                    }
+                }
+            }
+        }
+
         public static void clear()
         {
             planets = new List<Planet>();

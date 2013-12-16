@@ -24,7 +24,7 @@ namespace Gravity_War
 
         public Game1()
         {
-            Bullet.radius = 40;
+            Bullet.radius = 10;
             Bullet.timeStep = .2;
             graphics = new GraphicsDeviceManager(this);
             graphics.IsFullScreen = false;
@@ -67,13 +67,13 @@ namespace Gravity_War
             planetGenerator.loadImage(Content.Load<Texture2D>("orangePlanet"));
             planetGenerator.loadImage(Content.Load<Texture2D>("sunPlanet"));
             planetGenerator.loadImage(Content.Load<Texture2D>("yellowPlanet"));
-            Bullet.image = Content.Load<Texture2D>("dollarBill");
+            Bullet.image = Content.Load<Texture2D>("bullet");
             timesNewRoman = Content.Load<SpriteFont>("TimesNewRoman");
             Random r = new Random();
             int n = 1000;
             for(int a = 0; a < n; a++)
             {   
-                Bullets.add(new Bullet(new Vector2(/*r.Next(windowX)*/0, ((float)windowY * a / n)/*r.Next(windowY)*/), new Vector2((float)r.NextDouble()*1, (float)r.NextDouble()*0)));
+                Bullets.add(new Bullet(new Vector2(/*r.Next(windowX)*/0, ((float)windowY * a / n)/*r.Next(windowY)*/), new Vector2((float)r.NextDouble()*0+5, (float)r.NextDouble()*0)));
                 //Bullets.add(new Bullet(new Vector2(/*r.Next(windowX)*/windowX, ((float)windowY * a / n)/*r.Next(windowY)*/), new Vector2((float)r.NextDouble() * -1, (float)r.NextDouble() * 0)));
                 //Bullets.add(new Bullet(new Vector2(/*r.Next(windowX)*/ ((float)windowX * a / n),0/*r.Next(windowY)*/), new Vector2((float)r.NextDouble() * 0, (float)r.NextDouble() * 1)));
                 //Bullets.add(new Bullet(new Vector2(/*r.Next(windowX)*/ ((float)windowX * a / n),windowY/*r.Next(windowY)*/), new Vector2((float)r.NextDouble() * 0, (float)r.NextDouble() * - 1)));
@@ -112,6 +112,15 @@ namespace Gravity_War
                     a--;
                 }
             }
+            for (int a = 0; a < Planets.getPlanets().Count; a++)
+            {
+                Planets.getPlanets().ElementAt<Planet>(a).move(Planets.getGravityField(Planets.getPlanets().ElementAt<Planet>(a).getLocation()));
+            }
+            for (int a = 0; a < Planets.getPlanets().Count; a++)
+            {
+                Planets.getPlanets().ElementAt<Planet>(a).move();
+            }
+            Planets.colide();
 
             if (Bullets.getBullets().Count == 0)
             {

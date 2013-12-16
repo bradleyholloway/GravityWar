@@ -91,11 +91,21 @@ namespace Gravity_War
             Planet temp;
             do
             {
-                double radius = r.NextDouble() * (Math.Min(width, height) / 20) + Math.Min(width, height) / 20;
-                double density = r.NextDouble() * .5 + .5;
-                Texture2D image = images.ElementAt<Texture2D>(r.Next(images.Count));
-                
-                temp = new Planet(location, image, radius, density);
+                if (r.Next(10) == 0)
+                {
+                    double radius = Math.Min(width, height) / 20;
+                    double density = 50;
+                    Texture2D image = images.ElementAt<Texture2D>(1);//images.Count-1);
+                    temp = new Planet(location, image, radius, density);
+                }
+                else
+                {
+
+                    double radius = r.NextDouble() * (Math.Min(width, height) / 20) + Math.Min(width, height) / 20;
+                    double density = r.NextDouble() * .5 + .5;
+                    Texture2D image = images.ElementAt<Texture2D>(0);//r.Next(images.Count-1));
+                    temp = new Planet(location, image, radius, density);
+                }
             }
             while (Planets.collides(temp));
             Planets.Add(temp);
