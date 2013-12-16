@@ -26,7 +26,7 @@ namespace Gravity_War
             this.image = image;
             this.scale = (float)((double)2 * radius/image.Width);
             this.density = density;
-            this.mass = density * Math.PI * radius * radius;
+            this.mass = density * Math.PI * radius * radius *radius *4 / 3;
             this.origin = new Vector2((float)image.Width/2, (float)image.Height/2);
         }
         public Vector2 getGravityField(Vector2 location)

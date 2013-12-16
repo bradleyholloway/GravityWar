@@ -24,8 +24,8 @@ namespace Gravity_War
 
         public Game1()
         {
-            Bullet.radius = 10;
-            Bullet.timeStep = .8;
+            Bullet.radius = 40;
+            Bullet.timeStep = .2;
             graphics = new GraphicsDeviceManager(this);
             graphics.IsFullScreen = false;
             Content.RootDirectory = "Content";
@@ -67,16 +67,19 @@ namespace Gravity_War
             planetGenerator.loadImage(Content.Load<Texture2D>("orangePlanet"));
             planetGenerator.loadImage(Content.Load<Texture2D>("sunPlanet"));
             planetGenerator.loadImage(Content.Load<Texture2D>("yellowPlanet"));
-            Bullet.image = Content.Load<Texture2D>("bullet");
+            Bullet.image = Content.Load<Texture2D>("dollarBill");
             timesNewRoman = Content.Load<SpriteFont>("TimesNewRoman");
             Random r = new Random();
-            for(int a = 0; a < 1000; a++)
+            int n = 1000;
+            for(int a = 0; a < n; a++)
             {   
-                Bullets.add(new Bullet(new Vector2(/*r.Next(windowX)*/0, ((float)windowY * a / 1000)/*r.Next(windowY)*/), new Vector2((float)r.NextDouble()*0+1, (float)r.NextDouble()*0)));
-                Bullets.add(new Bullet(new Vector2(/*r.Next(windowX)*/windowX, ((float)windowY * a / 1000)/*r.Next(windowY)*/), new Vector2((float)r.NextDouble() * 0 -1, (float)r.NextDouble() * 0)));
+                Bullets.add(new Bullet(new Vector2(/*r.Next(windowX)*/0, ((float)windowY * a / n)/*r.Next(windowY)*/), new Vector2((float)r.NextDouble()*1, (float)r.NextDouble()*0)));
+                //Bullets.add(new Bullet(new Vector2(/*r.Next(windowX)*/windowX, ((float)windowY * a / n)/*r.Next(windowY)*/), new Vector2((float)r.NextDouble() * -1, (float)r.NextDouble() * 0)));
+                //Bullets.add(new Bullet(new Vector2(/*r.Next(windowX)*/ ((float)windowX * a / n),0/*r.Next(windowY)*/), new Vector2((float)r.NextDouble() * 0, (float)r.NextDouble() * 1)));
+                //Bullets.add(new Bullet(new Vector2(/*r.Next(windowX)*/ ((float)windowX * a / n),windowY/*r.Next(windowY)*/), new Vector2((float)r.NextDouble() * 0, (float)r.NextDouble() * - 1)));
             }
             Planets.clear();
-            planetGenerator.generate(r.Next(15)+5, true);
+            planetGenerator.generate(r.Next(3)+2, r.Next(2)==0);//r.Next(15)+5, r.Next(2) == 0);
             // TODO: use this.Content to load your game content here
         }
 
