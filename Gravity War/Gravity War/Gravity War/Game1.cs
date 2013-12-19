@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
+using BradleyXboxUtils;
 
 namespace Gravity_War
 {
@@ -19,8 +20,15 @@ namespace Gravity_War
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         SpriteFont timesNewRoman;
+        KeyboardInput keyboard = new KeyboardInput();
+        ControlButton button = new ControlButton();
+        ControlButton bullets = new ControlButton();
+        ControlButton planets = new ControlButton();
 
         PlanetGenerator planetGenerator;
+
+        int windowX, windowY;
+        Random r;
 
         public Game1()
         {
@@ -55,31 +63,28 @@ namespace Gravity_War
             
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            int windowX = GraphicsDevice.Viewport.Width;
-            int windowY = GraphicsDevice.Viewport.Height;
+            windowX = GraphicsDevice.Viewport.Width;
+            windowY = GraphicsDevice.Viewport.Height;
             planetGenerator = new PlanetGenerator(windowX, windowY);
             planetGenerator.clearImages();
-            planetGenerator.loadImage(Content.Load<Texture2D>("bluePlanet"));
+            /*planetGenerator.loadImage(Content.Load<Texture2D>("bluePlanet"));
             planetGenerator.loadImage(Content.Load<Texture2D>("brownPlanet"));
             planetGenerator.loadImage(Content.Load<Texture2D>("earthPlanet"));
             planetGenerator.loadImage(Content.Load<Texture2D>("goldPlanet"));
             planetGenerator.loadImage(Content.Load<Texture2D>("moonPlanet"));
             planetGenerator.loadImage(Content.Load<Texture2D>("orangePlanet"));
             planetGenerator.loadImage(Content.Load<Texture2D>("sunPlanet"));
-            planetGenerator.loadImage(Content.Load<Texture2D>("yellowPlanet"));
-            Bullet.image = Content.Load<Texture2D>("bullet");
+            planetGenerator.loadImage(Content.Load<Texture2D>("yellowPlanet"));*/
+            planetGenerator.loadImage(Content.Load<Texture2D>("dollar"));
+            Bullet.image = Content.Load<Texture2D>("dollarBill");
             timesNewRoman = Content.Load<SpriteFont>("TimesNewRoman");
-            Random r = new Random();
-            int n = 1000;
-            for(int a = 0; a < n; a++)
-            {   
-                Bullets.add(new Bullet(new Vector2(/*r.Next(windowX)*/0, ((float)windowY * a / n)/*r.Next(windowY)*/), new Vector2((float)r.NextDouble()*0+5, (float)r.NextDouble()*0)));
-                //Bullets.add(new Bullet(new Vector2(/*r.Next(windowX)*/windowX, ((float)windowY * a / n)/*r.Next(windowY)*/), new Vector2((float)r.NextDouble() * -1, (float)r.NextDouble() * 0)));
-                //Bullets.add(new Bullet(new Vector2(/*r.Next(windowX)*/ ((float)windowX * a / n),0/*r.Next(windowY)*/), new Vector2((float)r.NextDouble() * 0, (float)r.NextDouble() * 1)));
-                //Bullets.add(new Bullet(new Vector2(/*r.Next(windowX)*/ ((float)windowX * a / n),windowY/*r.Next(windowY)*/), new Vector2((float)r.NextDouble() * 0, (float)r.NextDouble() * - 1)));
-            }
-            Planets.clear();
-            planetGenerator.generate(r.Next(3)+2, r.Next(2)==0);//r.Next(15)+5, r.Next(2) == 0);
+            Bullets.clear();
+            r = new Random();
+            addBullets();
+            addPlanets();
+
+            
+            
             // TODO: use this.Content to load your game content here
         }
 
@@ -122,9 +127,17 @@ namespace Gravity_War
             }
             Planets.colide();
 
-            if (Bullets.getBullets().Count == 0)
+            if (Bullets.getBullets().Count == 0 || button.update(keyboard.getBottomActionButton()))
             {
                 LoadContent();
+            }
+            if (bullets.update(keyboard.getRightActionButton()))
+            {
+                addBullets();
+            }
+            if (planets.update(keyboard.getLeftActionButton()))
+            {
+                addPlanets();
             }
 
             // TODO: Add your update logic here
@@ -152,6 +165,22 @@ namespace Gravity_War
             spriteBatch.DrawString(timesNewRoman, "" + Bullets.getBullets().Count, new Vector2(100, 100), Color.White);
             spriteBatch.End();
             base.Draw(gameTime);
+        }
+        public void addBullets()
+        {
+            int n = 500;
+            for (int a = 0; a < n; a++)
+            {
+                Bullets.add(new Bullet(new Vector2(/*r.Next(windowX)*/0, ((float)windowY * a / n)/*r.Next(windowY)*/), new Vector2((float)r.NextDouble() * 0 + 5, (float)r.NextDouble() * 0)));
+                Bullets.add(new Bullet(new Vector2(/*r.Next(windowX)*/windowX, ((float)windowY * a / n)/*r.Next(windowY)*/), new Vector2((float)r.NextDouble() * 0 - 5, (float)r.NextDouble() * 0)));
+                Bullets.add(new Bullet(new Vector2(/*r.Next(windowX)*/ ((float)windowX * a / n),0/*r.Next(windowY)*/), new Vector2((float)r.NextDouble() * 0, (float)r.NextDouble() * 0 + 5)));
+                Bullets.add(new Bullet(new Vector2(/*r.Next(windowX)*/ ((float)windowX * a / n),windowY/*r.Next(windowY)*/), new Vector2((float)r.NextDouble() * 0, (float)r.NextDouble() * 0 - 5)));
+            }
+        }
+        public void addPlanets()
+        {
+            Planets.clear();
+            planetGenerator.generate(r.Next(8) * 1 + 2, r.Next(2) == 0, r.Next(2) == 0);//r.Next(15)+5, r.Next(2) == 0);
         }
     }
 }

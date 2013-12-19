@@ -21,9 +21,9 @@ namespace Gravity_War
         }
         public void generate(int n)
         {
-            generate(n, false);
+            generate(n, false, false);
         }
-        public void generate(int n, bool orderly)
+        public void generate(int n, bool orderly, bool move)
         {
             if(orderly)
             {
@@ -34,7 +34,7 @@ namespace Gravity_War
             {
                 for (int b = 0; b < y; b++)
                 {
-                    getPlanet(new Vector2((float)(a+.5)/x*width, (float)(b+.5)/y*height));
+                    getPlanet(new Vector2((float)(a+.5)/x*width, (float)(b+.5)/y*height), move);
                 }
             }
             }
@@ -42,7 +42,7 @@ namespace Gravity_War
             {
                 for(int a = 0; a<n; a++)
                 {
-                    getPlanet();
+                    getPlanet(move);
                 }
             }
 
@@ -57,7 +57,7 @@ namespace Gravity_War
         {
             images.Add(image);
         }
-        public Planet getPlanet()
+        public Planet getPlanet(bool move)
         {
             Planet temp;
             do
@@ -65,28 +65,28 @@ namespace Gravity_War
                 if (r.Next(10) == 0)
                 {
                     double radius = Math.Min(width, height) / 20;
-                    double density = 50;
-                    Texture2D image = images.ElementAt<Texture2D>(1);//images.Count-1);
+                    double density = 500;
+                    Texture2D image = images.ElementAt<Texture2D>(images.Count-1);
                     double x = r.NextDouble() * (width - 2 * radius) + radius;
                     double y = r.NextDouble() * (height - 2 * radius) + radius;
-                    temp = new Planet(new Microsoft.Xna.Framework.Vector2((int)x, (int)y), image, radius, density);
+                    temp = new Planet(new Microsoft.Xna.Framework.Vector2((int)x, (int)y), image, radius, density, move);
                 }
                 else
                 {
 
                     double radius = r.NextDouble() * (Math.Min(width, height) / 20) + Math.Min(width, height) / 20;
                     double density = r.NextDouble() * .5 + .5;
-                    Texture2D image = images.ElementAt<Texture2D>(0);//r.Next(images.Count-1));
+                    Texture2D image = images.ElementAt<Texture2D>(r.Next(images.Count-1));
                     double x = r.NextDouble() * (width - 2 * radius) + radius;
                     double y = r.NextDouble() * (height - 2 * radius) + radius;
-                    temp = new Planet(new Microsoft.Xna.Framework.Vector2((int)x, (int)y), image, radius, density);
+                    temp = new Planet(new Microsoft.Xna.Framework.Vector2((int)x, (int)y), image, radius, density, move);
                 }
             } 
             while (Planets.collides(temp));
             Planets.Add(temp);
             return temp;
         }
-        public Planet getPlanet(Vector2 location)
+        public Planet getPlanet(Vector2 location, bool move)
         {
             Planet temp;
             do
@@ -94,17 +94,17 @@ namespace Gravity_War
                 if (r.Next(10) == 0)
                 {
                     double radius = Math.Min(width, height) / 20;
-                    double density = 50;
-                    Texture2D image = images.ElementAt<Texture2D>(1);//images.Count-1);
-                    temp = new Planet(location, image, radius, density);
+                    double density = 500;
+                    Texture2D image = images.ElementAt<Texture2D>(images.Count-1);
+                    temp = new Planet(location, image, radius, density, move);
                 }
                 else
                 {
 
                     double radius = r.NextDouble() * (Math.Min(width, height) / 20) + Math.Min(width, height) / 20;
                     double density = r.NextDouble() * .5 + .5;
-                    Texture2D image = images.ElementAt<Texture2D>(0);//r.Next(images.Count-1));
-                    temp = new Planet(location, image, radius, density);
+                    Texture2D image = images.ElementAt<Texture2D>(r.Next(images.Count-1));
+                    temp = new Planet(location, image, radius, density, move);
                 }
             }
             while (Planets.collides(temp));

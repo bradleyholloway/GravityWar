@@ -19,8 +19,10 @@ namespace Gravity_War
         private Vector2 origin;
         private static double G = 6.67384 * Math.Pow(10, -11) * 1000000000;
         private Vector2 velocity;
+        private bool movable;
+        private static Random r = new Random();
 
-        public Planet(Vector2 location, Texture2D image, double radius, double density)
+        public Planet(Vector2 location, Texture2D image, double radius, double density, bool movable)
         {
             this.location = location;
             this.radius = radius;
@@ -29,7 +31,8 @@ namespace Gravity_War
             this.density = density;
             this.mass = density * Math.PI * radius * radius *radius *4 / 3;
             this.origin = new Vector2((float)image.Width/2, (float)image.Height/2);
-            this.velocity = Vector2.Zero;
+            this.velocity = new Vector2(r.Next(5)-2, r.Next(5)-2);//Vector2.Zero;
+            this.movable = movable;
         }
         public Planet(Planet p1, Planet p2)
         {
@@ -41,6 +44,7 @@ namespace Gravity_War
             this.mass = density * Math.PI * radius * radius * radius * 4 / 3;
             this.origin = new Vector2((float)image.Width / 2, (float)image.Height / 2);
             this.velocity = Vector2.Zero;
+            this.movable = true;
         }
 
         public Vector2 getGravityField(Vector2 location)
@@ -69,11 +73,13 @@ namespace Gravity_War
         }
         public void move(Vector2 gravityField)
         {
-            velocity += gravityField * (float)Bullet.timeStep;
+            if (movable)
+                velocity += gravityField * (float)Bullet.timeStep;
         }
         public void move()
         {
-            location += velocity * (float)Bullet.timeStep;
+            if(movable)
+                location += velocity * (float)Bullet.timeStep;
         }
     }
 }

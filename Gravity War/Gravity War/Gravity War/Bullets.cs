@@ -21,5 +21,9 @@ namespace Gravity_War
         {
             bullets.Add(b);
         }
+        public static void clear()
+        {
+            bullets = new List<Bullet>();
+        }
     }
 }
