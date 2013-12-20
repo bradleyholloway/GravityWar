@@ -24,6 +24,7 @@ namespace Gravity_War
         ControlButton button = new ControlButton();
         ControlButton bullets = new ControlButton();
         ControlButton planets = new ControlButton();
+        List<Player> players;
 
         PlanetGenerator planetGenerator;
 
@@ -34,9 +35,12 @@ namespace Gravity_War
         {
             Bullet.radius = 10;
             Bullet.timeStep = .2;
+            Player.radius = 20;
+            Player.timeStep = .2;
             graphics = new GraphicsDeviceManager(this);
             graphics.IsFullScreen = false;
             Content.RootDirectory = "Content";
+            this.graphics.IsFullScreen = true;
             
 
         }
@@ -67,21 +71,25 @@ namespace Gravity_War
             windowY = GraphicsDevice.Viewport.Height;
             planetGenerator = new PlanetGenerator(windowX, windowY);
             planetGenerator.clearImages();
-            /*planetGenerator.loadImage(Content.Load<Texture2D>("bluePlanet"));
+            planetGenerator.loadImage(Content.Load<Texture2D>("bluePlanet"));
             planetGenerator.loadImage(Content.Load<Texture2D>("brownPlanet"));
             planetGenerator.loadImage(Content.Load<Texture2D>("earthPlanet"));
             planetGenerator.loadImage(Content.Load<Texture2D>("goldPlanet"));
             planetGenerator.loadImage(Content.Load<Texture2D>("moonPlanet"));
             planetGenerator.loadImage(Content.Load<Texture2D>("orangePlanet"));
             planetGenerator.loadImage(Content.Load<Texture2D>("sunPlanet"));
-            planetGenerator.loadImage(Content.Load<Texture2D>("yellowPlanet"));*/
-            planetGenerator.loadImage(Content.Load<Texture2D>("dollar"));
-            Bullet.image = Content.Load<Texture2D>("dollarBill");
+            planetGenerator.loadImage(Content.Load<Texture2D>("yellowPlanet"));
+            //planetGenerator.loadImage(Content.Load<Texture2D>("dollar"));
+            Bullet.image = Content.Load<Texture2D>("bullet");
+            Player.image = Content.Load<Texture2D>("ufo");
             timesNewRoman = Content.Load<SpriteFont>("TimesNewRoman");
             Bullets.clear();
             r = new Random();
             addBullets();
             addPlanets();
+
+            players = new List<Player>();
+            players.Add(new Player(Planets.getPlanets().ElementAt<Planet>(0), 0f));
 
             
             
@@ -121,20 +129,52 @@ namespace Gravity_War
             {
                 Planets.getPlanets().ElementAt<Planet>(a).move(Planets.getGravityField(Planets.getPlanets().ElementAt<Planet>(a).getLocation()));
             }
+            for (int a=0; a < players.Count; a++)
+                
+            {
+                Player p = players.ElementAt<Player>(a);
+                if (keyboard.getDownDPad())
+                {
+                    p.launch();
+                }
+                if (p.airborne())
+                {
+                    if (Planets.collides(p.getLocation()))
+                    {
+                        p.land(Planets.collide(p.getLocation()));
+                    }
+                }
+                if (bullets.update(keyboard.getRightActionButton()))
+                {
+                    p.fire();
+                }
+                
+
+                p.move(keyboard.getLeftJoystick());
+                p.run(Planets.getGravityField(p.getLocation()));
+
+                p.checkHit();
+                if (p.isDead())
+                {
+                    players.Remove(p);
+                    a--;
+                }
+            }
+
             for (int a = 0; a < Planets.getPlanets().Count; a++)
             {
                 Planets.getPlanets().ElementAt<Planet>(a).move();
             }
             Planets.colide();
 
-            if (Bullets.getBullets().Count == 0 || button.update(keyboard.getBottomActionButton()))
+            if (button.update(keyboard.getBottomActionButton()))
             {
                 LoadContent();
             }
-            if (bullets.update(keyboard.getRightActionButton()))
-            {
-                addBullets();
-            }
+            //if (bullets.update(keyboard.getRightActionButton()))
+            //{
+            //    addBullets();
+            //}
             if (planets.update(keyboard.getLeftActionButton()))
             {
                 addPlanets();
@@ -162,13 +202,17 @@ namespace Gravity_War
             {
                 spriteBatch.Draw(Bullet.image, b.getLocation(), null, Color.White, b.getRotation(), Bullet.origin, Bullet.scale, SpriteEffects.None, 0f);
             }
+            foreach (Player p in players)
+            {
+                spriteBatch.Draw(Player.image, p.getLocation(), null, Color.White, p.getRotation(), Player.origin, Player.scale, SpriteEffects.None, 0f);
+            }
             spriteBatch.DrawString(timesNewRoman, "" + Bullets.getBullets().Count, new Vector2(100, 100), Color.White);
             spriteBatch.End();
             base.Draw(gameTime);
         }
         public void addBullets()
         {
-            int n = 500;
+            int n = 100;
             for (int a = 0; a < n; a++)
             {
                 Bullets.add(new Bullet(new Vector2(/*r.Next(windowX)*/0, ((float)windowY * a / n)/*r.Next(windowY)*/), new Vector2((float)r.NextDouble() * 0 + 5, (float)r.NextDouble() * 0)));
@@ -180,7 +224,7 @@ namespace Gravity_War
         public void addPlanets()
         {
             Planets.clear();
-            planetGenerator.generate(r.Next(8) * 1 + 2, r.Next(2) == 0, r.Next(2) == 0);//r.Next(15)+5, r.Next(2) == 0);
+            planetGenerator.generate(8, false, false);//r.Next(8) * 1 + 2, r.Next(2) == 0, r.Next(2) == 0);//r.Next(15)+5, r.Next(2) == 0);
         }
     }
 }

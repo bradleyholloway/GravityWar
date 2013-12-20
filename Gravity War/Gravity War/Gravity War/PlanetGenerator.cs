@@ -62,7 +62,7 @@ namespace Gravity_War
             Planet temp;
             do
             {
-                if (r.Next(10) == 0)
+                if (r.Next(10) == 10)
                 {
                     double radius = Math.Min(width, height) / 20;
                     double density = 500;
@@ -91,7 +91,7 @@ namespace Gravity_War
             Planet temp;
             do
             {
-                if (r.Next(10) == 0)
+                if (r.Next(10) == 10)
                 {
                     double radius = Math.Min(width, height) / 20;
                     double density = 500;

@@ -24,6 +24,15 @@ namespace Gravity_War
             }
             return false;
         }
+        public static Planet collide(Vector2 location)
+        {
+            foreach (Planet p in planets)
+            {
+                if (UTIL.distance(location, p.getLocation()) < p.getRadius())
+                    return p;
+            }
+            return null;
+        }
         
         public static Vector2 getGravityField(Vector2 location)
         {
