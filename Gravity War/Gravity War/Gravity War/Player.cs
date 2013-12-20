@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using BradleyXboxUtils;
 
 namespace Gravity_War
 {
@@ -25,7 +26,11 @@ namespace Gravity_War
         private Planet planet;
         private float angle;
 
-        public Player(Planet planet, float angle)
+        private Input input;
+        private ControlButton fireButton;
+        private ControlButton jump;
+
+        public Player(Planet planet, float angle, Input input)
         {
             health = life;
             if (scale == 0)
@@ -33,25 +38,11 @@ namespace Gravity_War
                 origin = new Vector2(image.Width / 2, image.Height / 2);
                 scale = 2 * radius / image.Width;
             }
-
+            this.input = input;
             this.planet = planet;
             this.angle = angle;
-        }
-
-
-        public Player(Vector2 location, Vector2 velocity)
-        {
-            health = life;
-            if (scale == 0)
-            {
-                origin = new Vector2(image.Width / 2, image.Height / 2);
-                scale = 2 * radius / image.Width;
-            }
-
-            this.location = location;
-            this.velocity = velocity;
-            time = 5;
-
+            this.jump = new ControlButton(120);
+            this.fireButton = new ControlButton(10);
         }
         public void fire()
         {
@@ -76,17 +67,44 @@ namespace Gravity_War
             return (health <= 0);
         }
 
-        public void run(Vector2 gravity)
+        public void run()
         {
+            Vector2 gravity = Planets.getGravityField(location);
+            move();
             angle = (float)BradleyXboxUtils.UTIL.normalizeDirection(angle);
+            
             if (planet == null)
             {
                 velocity += gravity * (float)timeStep;
                 velocity += BradleyXboxUtils.UTIL.magD(.3, angle);
+
+                if (velocity.Length() > 10)
+                {
+                    velocity = UTIL.magD(10, Math.Atan2(velocity.Y, velocity.X));
+                }
+                
                 location += velocity * (float)timeStep;
+                
+                
+
+                if (Planets.collides(getLocation()))
+                {
+                    land(Planets.collide(getLocation()));
+                }
             }
             else
+            {   
                 location = planet.getLocation() + BradleyXboxUtils.UTIL.magD(planet.getRadius(), angle);
+
+                if (jump.update(input.getBottomActionButton()))
+                {
+                    launch();
+                }
+            }
+            if (fireButton.update(input.getRightActionButton()))
+                fire();
+            checkHit();
+
         }
         public void launch()
         {
@@ -115,8 +133,9 @@ namespace Gravity_War
             return location;
         }
 
-        public void move(Vector2 joystick)
+        public void move()
         {
+            Vector2 joystick = input.getLeftJoystick();
             if (joystick.Length() < .1)
                 return;
             if (Math.Abs(joystick.X) > Math.Abs(joystick.Y))

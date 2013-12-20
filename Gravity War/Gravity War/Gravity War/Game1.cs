@@ -40,7 +40,7 @@ namespace Gravity_War
             graphics = new GraphicsDeviceManager(this);
             graphics.IsFullScreen = false;
             Content.RootDirectory = "Content";
-            this.graphics.IsFullScreen = true;
+            //this.graphics.IsFullScreen = true;
             
 
         }
@@ -89,7 +89,7 @@ namespace Gravity_War
             addPlanets();
 
             players = new List<Player>();
-            players.Add(new Player(Planets.getPlanets().ElementAt<Planet>(0), 0f));
+            players.Add(new Player(Planets.getPlanets().ElementAt<Planet>(0), 0f, new KeyboardInput()));
             //players.Add(new Player(Planets.getPlanets().ElementAt<Planet>(1), 0f));
 
             
@@ -134,27 +134,11 @@ namespace Gravity_War
                 
             {
                 Player p = players.ElementAt<Player>(a);
-                if (keyboard.getDownDPad())
-                {
-                    p.launch();
-                }
-                if (p.airborne())
-                {
-                    if (Planets.collides(p.getLocation()))
-                    {
-                        p.land(Planets.collide(p.getLocation()));
-                    }
-                }
-                if (bullets.update(keyboard.getRightActionButton()))
-                {
-                    p.fire();
-                }
                 
+                
+               
+                p.run();
 
-                p.move(keyboard.getLeftJoystick());
-                p.run(Planets.getGravityField(p.getLocation()));
-
-                p.checkHit();
                 if (p.isDead())
                 {
                     players.Remove(p);
@@ -168,18 +152,18 @@ namespace Gravity_War
             }
             Planets.colide();
 
-            if (button.update(keyboard.getBottomActionButton()))
-            {
-                LoadContent();
-            }
+            //if (button.update(keyboard.getBottomActionButton()))
+            //{
+            //    LoadContent();
+            //}
             //if (bullets.update(keyboard.getRightActionButton()))
             //{
             //    addBullets();
             //}
-            if (planets.update(keyboard.getLeftActionButton()))
-            {
-                addPlanets();
-            }
+            //if (planets.update(keyboard.getLeftActionButton()))
+            //{
+            //    addPlanets();
+            //}
 
             // TODO: Add your update logic here
 
@@ -213,7 +197,7 @@ namespace Gravity_War
         }
         public void addBullets()
         {
-            int n = 100;
+            int n = 20;
             for (int a = 0; a < n; a++)
             {
                 Bullets.add(new Bullet(new Vector2(/*r.Next(windowX)*/0, ((float)windowY * a / n)/*r.Next(windowY)*/), new Vector2((float)r.NextDouble() * 0 + 5, (float)r.NextDouble() * 0)));
