@@ -79,7 +79,7 @@ namespace Gravity_War
             planetGenerator.loadImage(Content.Load<Texture2D>("orangePlanet"));
             planetGenerator.loadImage(Content.Load<Texture2D>("sunPlanet"));
             planetGenerator.loadImage(Content.Load<Texture2D>("yellowPlanet"));
-            //planetGenerator.loadImage(Content.Load<Texture2D>("dollar"));
+            planetGenerator.loadImage(Content.Load<Texture2D>("dollar"));
             Bullet.image = Content.Load<Texture2D>("bullet");
             Player.image = Content.Load<Texture2D>("ufo");
             timesNewRoman = Content.Load<SpriteFont>("TimesNewRoman");
@@ -90,6 +90,7 @@ namespace Gravity_War
 
             players = new List<Player>();
             players.Add(new Player(Planets.getPlanets().ElementAt<Planet>(0), 0f));
+            //players.Add(new Player(Planets.getPlanets().ElementAt<Planet>(1), 0f));
 
             
             
