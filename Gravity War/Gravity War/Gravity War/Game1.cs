@@ -21,9 +21,8 @@ namespace Gravity_War
         SpriteBatch spriteBatch;
         SpriteFont timesNewRoman;
         KeyboardInput keyboard = new KeyboardInput();
-        ControlButton button = new ControlButton();
-        ControlButton bullets = new ControlButton();
-        ControlButton planets = new ControlButton();
+        ControlButton reset = new ControlButton();
+
         List<Player> players;
 
         PlanetGenerator planetGenerator;
@@ -54,7 +53,7 @@ namespace Gravity_War
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-
+            reset = new ControlButton();
             base.Initialize();
         }
 
@@ -79,19 +78,30 @@ namespace Gravity_War
             planetGenerator.loadImage(Content.Load<Texture2D>("orangePlanet"));
             planetGenerator.loadImage(Content.Load<Texture2D>("sunPlanet"));
             planetGenerator.loadImage(Content.Load<Texture2D>("yellowPlanet"));
-            planetGenerator.loadImage(Content.Load<Texture2D>("dollar"));
+            //planetGenerator.loadImage(Content.Load<Texture2D>("dollar"));
             Bullet.image = Content.Load<Texture2D>("bullet");
             Player.image = Content.Load<Texture2D>("ufo");
             timesNewRoman = Content.Load<SpriteFont>("TimesNewRoman");
             Bullets.clear();
             r = new Random();
-            addBullets();
+            //addBullets();
             addPlanets();
 
             players = new List<Player>();
-            players.Add(new Player(Planets.getPlanets().ElementAt<Planet>(0), 0f, new KeyboardInput()));
-            //players.Add(new Player(Planets.getPlanets().ElementAt<Planet>(1), 0f));
 
+
+            if (GamePad.GetState(PlayerIndex.One).IsConnected)
+            {
+                players.Add(new Player(Planets.getPlanets().ElementAt<Planet>(0), 0f, new ControllerInput(PlayerIndex.One)));
+                if (GamePad.GetState(PlayerIndex.Two).IsConnected)
+                    players.Add(new Player(Planets.getPlanets().ElementAt<Planet>(1), 0f, new ControllerInput(PlayerIndex.Two)));
+                if (GamePad.GetState(PlayerIndex.Three).IsConnected)
+                    players.Add(new Player(Planets.getPlanets().ElementAt<Planet>(2), 0f, new ControllerInput(PlayerIndex.Three)));
+                if (GamePad.GetState(PlayerIndex.Four).IsConnected)
+                    players.Add(new Player(Planets.getPlanets().ElementAt<Planet>(3), 0f, new ControllerInput(PlayerIndex.Four)));
+            }
+            else
+                players.Add(new Player(Planets.getPlanets().ElementAt<Planet>(0), 0f, new KeyboardInput()));
             
             
             // TODO: use this.Content to load your game content here
@@ -152,6 +162,11 @@ namespace Gravity_War
             }
             Planets.colide();
 
+            if (players.Count == 0 || reset.update(players.ElementAt<Player>(0).getReset()))
+            {
+                LoadContent();
+            }
+
             //if (button.update(keyboard.getBottomActionButton()))
             //{
             //    LoadContent();
@@ -191,7 +206,7 @@ namespace Gravity_War
             {
                 spriteBatch.Draw(Player.image, p.getLocation(), null, Color.White, p.getRotation(), Player.origin, Player.scale, SpriteEffects.None, 0f);
             }
-            spriteBatch.DrawString(timesNewRoman, "" + Bullets.getBullets().Count, new Vector2(100, 100), Color.White);
+            //spriteBatch.DrawString(timesNewRoman, "" + Bullets.getBullets().Count, new Vector2(100, 100), Color.White);
             spriteBatch.End();
             base.Draw(gameTime);
         }

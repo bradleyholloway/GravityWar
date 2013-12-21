@@ -41,7 +41,7 @@ namespace Gravity_War
             this.input = input;
             this.planet = planet;
             this.angle = angle;
-            this.jump = new ControlButton(120);
+            this.jump = new ControlButton(60);
             this.fireButton = new ControlButton(10);
         }
         public void fire()
@@ -101,7 +101,7 @@ namespace Gravity_War
                     launch();
                 }
             }
-            if (fireButton.update(input.getRightActionButton()))
+            if (fireButton.update((input.getRightTrigger())>.5))
                 fire();
             checkHit();
 
@@ -208,6 +208,11 @@ namespace Gravity_War
         public bool airborne()
         {
             return (planet == null);
+        }
+
+        public bool getReset()
+        {
+            return input.getStart();
         }
 
     }
