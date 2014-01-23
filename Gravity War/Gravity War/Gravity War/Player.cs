@@ -15,9 +15,9 @@ namespace Gravity_War
         public static float scale;
         public static float radius;
         public static double timeStep;
-        public static int life = 100;
+        public static long life = 10000000000000;
 
-        private int health;
+        private long health;
 
         private Vector2 location;
         private Vector2 velocity;

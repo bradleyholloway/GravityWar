@@ -248,7 +248,7 @@ namespace BradleyXboxUtils
         }
         public override Boolean getUpDPad()
         {
-            return false;
+            return Keyboard.GetState().IsKeyDown(Keys.Space);
             //return (GamePad.GetState(p).DPad.Up == ButtonState.Pressed);
         }
         public override Boolean getRightDPad()
@@ -271,7 +271,7 @@ namespace BradleyXboxUtils
         }
         public override Boolean getStart()
         {
-            return false;
+            return Keyboard.GetState().IsKeyDown(Keys.Enter);
             //return (GamePad.GetState(p).IsButtonDown(Buttons.Start));
         }
         public override Boolean getBack()
@@ -286,7 +286,7 @@ namespace BradleyXboxUtils
         }
         public override Boolean getRightBumper()
         {
-            return false;
+            return Keyboard.GetState().IsKeyDown(Keys.F);
             //return GamePad.GetState(p).IsButtonDown(Buttons.RightShoulder);
         }
         public override Boolean getLeftBumper()

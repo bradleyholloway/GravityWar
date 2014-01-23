@@ -22,6 +22,7 @@ namespace Gravity_War
         SpriteFont timesNewRoman;
         KeyboardInput keyboard = new KeyboardInput();
         ControlButton reset = new ControlButton();
+        ControlButton bullets = new ControlButton();
 
         List<Player> players;
 
@@ -37,7 +38,7 @@ namespace Gravity_War
             Player.radius = 20;
             Player.timeStep = .2;
             graphics = new GraphicsDeviceManager(this);
-            graphics.IsFullScreen = false;
+            graphics.IsFullScreen = true;
             Content.RootDirectory = "Content";
             //this.graphics.IsFullScreen = true;
             
@@ -171,16 +172,18 @@ namespace Gravity_War
             //{
             //    LoadContent();
             //}
-            //if (bullets.update(keyboard.getRightActionButton()))
-            //{
-            //    addBullets();
-            //}
+            if (bullets.update(keyboard.getUpDPad()))
+            {
+                addBullets();
+            }
             //if (planets.update(keyboard.getLeftActionButton()))
             //{
             //    addPlanets();
             //}
 
             // TODO: Add your update logic here
+
+
 
             base.Update(gameTime);
         }
@@ -212,19 +215,26 @@ namespace Gravity_War
         }
         public void addBullets()
         {
-            int n = 20;
+            int n = 100;
             for (int a = 0; a < n; a++)
             {
-                Bullets.add(new Bullet(new Vector2(/*r.Next(windowX)*/0, ((float)windowY * a / n)/*r.Next(windowY)*/), new Vector2((float)r.NextDouble() * 0 + 5, (float)r.NextDouble() * 0)));
-                Bullets.add(new Bullet(new Vector2(/*r.Next(windowX)*/windowX, ((float)windowY * a / n)/*r.Next(windowY)*/), new Vector2((float)r.NextDouble() * 0 - 5, (float)r.NextDouble() * 0)));
-                Bullets.add(new Bullet(new Vector2(/*r.Next(windowX)*/ ((float)windowX * a / n),0/*r.Next(windowY)*/), new Vector2((float)r.NextDouble() * 0, (float)r.NextDouble() * 0 + 5)));
-                Bullets.add(new Bullet(new Vector2(/*r.Next(windowX)*/ ((float)windowX * a / n),windowY/*r.Next(windowY)*/), new Vector2((float)r.NextDouble() * 0, (float)r.NextDouble() * 0 - 5)));
+                //Bullets.add(new Bullet(new Vector2(/*r.Next(windowX)*/0, ((float)windowY * a / n)/*r.Next(windowY)*/), new Vector2((float)r.NextDouble() * 0 + 0, (float)r.NextDouble() * 0)));
+                //Bullets.add(new Bullet(new Vector2(/*r.Next(windowX)*/windowX, ((float)windowY * a / n)/*r.Next(windowY)*/), new Vector2((float)r.NextDouble() * 0 - 0, (float)r.NextDouble() * 0)));
+                //Bullets.add(new Bullet(new Vector2(/*r.Next(windowX)*/ ((float)windowX * a / n),0/*r.Next(windowY)*/), new Vector2((float)r.NextDouble() * 0, (float)r.NextDouble() * 0 + 0)));
+                //Bullets.add(new Bullet(new Vector2(/*r.Next(windowX)*/ ((float)windowX * a / n),windowY/*r.Next(windowY)*/), new Vector2((float)r.NextDouble() * 0, (float)r.NextDouble() * 0 - 0)));
+            }
+            for (int a = 0; a < n; a++)
+            {
+                for (int b = 0; b < n; b++)
+                {
+                    Bullets.add(new Bullet(new Vector2(/*r.Next(windowX)*/(float)windowX * b / n, ((float)windowY * a / n)/*r.Next(windowY)*/), new Vector2((float)r.NextDouble() * 0 + 0, (float)r.NextDouble() * 0)));
+                }
             }
         }
         public void addPlanets()
         {
             Planets.clear();
-            planetGenerator.generate(8, false, false);//r.Next(8) * 1 + 2, r.Next(2) == 0, r.Next(2) == 0);//r.Next(15)+5, r.Next(2) == 0);
+            planetGenerator.generate(4 + r.Next(6), false, false);//r.Next(8) * 1 + 2, r.Next(2) == 0, r.Next(2) == 0);//r.Next(15)+5, r.Next(2) == 0);
         }
     }
 }
