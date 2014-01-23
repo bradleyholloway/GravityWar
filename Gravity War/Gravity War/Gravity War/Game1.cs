@@ -52,7 +52,7 @@ namespace Gravity_War
             Player.radius = 20;
             Player.timeStep = .2;
             graphics = new GraphicsDeviceManager(this);
-            graphics.IsFullScreen = true;
+            graphics.IsFullScreen = false;
             Content.RootDirectory = "Content";
             //this.graphics.IsFullScreen = true;
             Components.Add(new GamerServicesComponent(this));
@@ -305,6 +305,26 @@ namespace Gravity_War
             {
                 errorMessage = e.Message;
             }
+        }
+
+        void hookSessionEvents()
+        {
+            networkSession.GamerJoined += GamerJoinedEventHandler;
+            networkSession.SessionEnded += SessionEndedEventHandler;
+        }
+
+        void GamerJoinedEventHandler(object sender, GamerJoinedEventArgs e)
+        {
+            int gamerIndex = networkSession.AllGamers.IndexOf(e.Gamer);
+            e.Gamer.Tag = new Player(Planets.getPlanets().ElementAt<Planet>(gamerIndex), 0.0f, new ControllerInput());
+        }
+
+        void SessionEndedEventHandler(object sender, NetworkSessionEndedEventArgs e)
+        {
+            errorMessage = e.EndReason.ToString();
+
+            networkSession.Dispose();
+            networkSession = null;
         }
 
         #endregion
