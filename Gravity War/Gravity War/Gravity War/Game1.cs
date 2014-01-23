@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using BradleyXboxUtils;
+using Microsoft.Xna.Framework.Net;
 
 namespace Gravity_War
 {
@@ -17,6 +18,7 @@ namespace Gravity_War
     /// </summary>
     public class Game1 : Microsoft.Xna.Framework.Game
     {
+        #region Fields
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         SpriteFont timesNewRoman;
@@ -24,12 +26,24 @@ namespace Gravity_War
         ControlButton reset = new ControlButton();
         ControlButton bullets = new ControlButton();
 
+        const int maxGamers = 16;
+        const int maxLocalGamers = 4;
+        NetworkSession networkSession;
+        PacketWriter packetWriter = new PacketWriter();
+        PacketReader packetReader = new PacketReader();
+
+        string errorMessage;
+
+
         List<Player> players;
 
         PlanetGenerator planetGenerator;
 
         int windowX, windowY;
         Random r;
+#endregion
+
+        #region Initialize
 
         public Game1()
         {
@@ -41,6 +55,7 @@ namespace Gravity_War
             graphics.IsFullScreen = true;
             Content.RootDirectory = "Content";
             //this.graphics.IsFullScreen = true;
+            Components.Add(new GamerServicesComponent(this));
             
 
         }
@@ -107,15 +122,7 @@ namespace Gravity_War
             
             // TODO: use this.Content to load your game content here
         }
-
-        /// <summary>
-        /// UnloadContent will be called once per game and is the place to unload
-        /// all content.
-        /// </summary>
-        protected override void UnloadContent()
-        {
-            // TODO: Unload any non ContentManager content here
-        }
+        #endregion
 
         /// <summary>
         /// Allows the game to run logic such as updating the world,
@@ -125,64 +132,17 @@ namespace Gravity_War
         protected override void Update(GameTime gameTime)
         {
             // Allows the game to exit
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
+            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 this.Exit();
 
-            for (int a = 0; a < Bullets.getBullets().Count; a++ )
+            if (networkSession == null)
             {
-                Bullets.getBullets().ElementAt<Bullet>(a).run(Planets.getGravityField(Bullets.getBullets().ElementAt<Bullet>(a).getLocation()));
-                if (Planets.collides(Bullets.getBullets().ElementAt<Bullet>(a).getLocation()))
-                {
-                    Bullets.remove(a);
-                    a--;
-                }
+                runMenu();
             }
-            for (int a = 0; a < Planets.getPlanets().Count; a++)
+            else
             {
-                Planets.getPlanets().ElementAt<Planet>(a).move(Planets.getGravityField(Planets.getPlanets().ElementAt<Planet>(a).getLocation()));
+                runGame();
             }
-            for (int a=0; a < players.Count; a++)
-                
-            {
-                Player p = players.ElementAt<Player>(a);
-                
-                
-               
-                p.run();
-
-                if (p.isDead())
-                {
-                    players.Remove(p);
-                    a--;
-                }
-            }
-
-            for (int a = 0; a < Planets.getPlanets().Count; a++)
-            {
-                Planets.getPlanets().ElementAt<Planet>(a).move();
-            }
-            Planets.colide();
-
-            if (players.Count == 0 || reset.update(players.ElementAt<Player>(0).getReset()))
-            {
-                LoadContent();
-            }
-
-            //if (button.update(keyboard.getBottomActionButton()))
-            //{
-            //    LoadContent();
-            //}
-            if (bullets.update(keyboard.getUpDPad()))
-            {
-                addBullets();
-            }
-            //if (planets.update(keyboard.getLeftActionButton()))
-            //{
-            //    addPlanets();
-            //}
-
-            // TODO: Add your update logic here
-
 
 
             base.Update(gameTime);
@@ -213,6 +173,59 @@ namespace Gravity_War
             spriteBatch.End();
             base.Draw(gameTime);
         }
+
+        #region game
+        public void runGame()
+        {
+            for (int a = 0; a < Bullets.getBullets().Count; a++)
+            {
+                Bullets.getBullets().ElementAt<Bullet>(a).run(Planets.getGravityField(Bullets.getBullets().ElementAt<Bullet>(a).getLocation()));
+                if (Planets.collides(Bullets.getBullets().ElementAt<Bullet>(a).getLocation()))
+                {
+                    Bullets.remove(a);
+                    a--;
+                }
+            }
+            for (int a = 0; a < Planets.getPlanets().Count; a++)
+            {
+                Planets.getPlanets().ElementAt<Planet>(a).move(Planets.getGravityField(Planets.getPlanets().ElementAt<Planet>(a).getLocation()));
+            }
+            for (int a = 0; a < players.Count; a++)
+            {
+                Player p = players.ElementAt<Player>(a);
+
+
+
+                p.run();
+
+                if (p.isDead())
+                {
+                    players.Remove(p);
+                    a--;
+                }
+            }
+
+            for (int a = 0; a < Planets.getPlanets().Count; a++)
+            {
+                Planets.getPlanets().ElementAt<Planet>(a).move();
+            }
+            Planets.colide();
+
+            if (players.Count == 0 || reset.update(players.ElementAt<Player>(0).getReset()))
+            {
+                LoadContent();
+            }
+
+            //if (button.update(keyboard.getBottomActionButton()))
+            //{
+            //    LoadContent();
+            //}
+            if (bullets.update(keyboard.getUpDPad()))
+            {
+                addBullets();
+            }
+        }
+
         public void addBullets()
         {
             int n = 100;
@@ -236,5 +249,72 @@ namespace Gravity_War
             Planets.clear();
             planetGenerator.generate(4 + r.Next(6), false, false);//r.Next(8) * 1 + 2, r.Next(2) == 0, r.Next(2) == 0);//r.Next(15)+5, r.Next(2) == 0);
         }
+        #endregion
+
+        #region menu
+
+        public void runMenu()
+        {
+            if (IsActive)
+            {
+                if (Gamer.SignedInGamers.Count == 0)
+                {
+                    Guide.ShowSignIn(maxLocalGamers, false);
+                }
+                else if (isPressed(Keys.A, Buttons.A))
+                {
+                    createSession();
+                }
+                else if (isPressed(Keys.B, Buttons.B))
+                {
+                    joinSession();
+                }
+            }
+
+        }
+
+        void createSession()
+        {
+            try
+            {
+                networkSession = NetworkSession.Create(NetworkSessionType.SystemLink, maxLocalGamers, maxGamers);
+                hookSessionEvents();
+            }
+            catch (Exception e)
+            {
+                errorMessage = e.Message;
+            }
+        }
+
+        void joinSession()
+        {
+            try
+            {
+                using (AvailableNetworkSessionCollection avalibleSessions =
+                    NetworkSession.Find(NetworkSessionType.SystemLink, maxLocalGamers, null))
+                {
+                    if (avalibleSessions.Count == 0)
+                    {
+                        return;
+                    }
+                    networkSession = NetworkSession.Join(avalibleSessions[0]);
+                    hookSessionEvents();
+                }
+            }
+            catch (Exception e)
+            {
+                errorMessage = e.Message;
+            }
+        }
+
+        #endregion
+
+#region helpers
+        public bool isPressed(Keys key, Buttons button)
+        {
+            return (Keyboard.GetState().IsKeyDown(key) || GamePad.GetState(PlayerIndex.One).IsButtonDown(button));
+        }
+
+#endregion
     }
 }
